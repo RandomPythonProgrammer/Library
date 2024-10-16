@@ -1,7 +1,7 @@
 #pragma once
 #include <Eigen/Eigen>
 
-using Vector6d = Eigen::Matrix<double, 6, 1> ;
+using Vector6d = Eigen::Matrix<double, 6, 1>;
 
 struct Spline {
     Vector6d coefficients; 
