@@ -1,8 +1,9 @@
 #pragma once
 #include "drive/Localizer.h"
-#include "pathing/Spline.h"
 #include "pathing/Trajectory.h"
 #include <vector>
+
+static const double ERROR = 0.01;
 
 using Vector11d = Eigen::Matrix<double, 11, 1>;
 using Vector10d = Eigen::Matrix<double, 10, 1>;

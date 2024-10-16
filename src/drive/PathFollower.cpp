@@ -3,7 +3,6 @@
 #include "pathing/Spline.h"
 #include "pathing/Trajectory.h"
 #include <cmath>
-#include <iostream>
 #include <vector>
 
 std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Trajectory& path, double lookAhead) {
@@ -34,13 +33,19 @@ std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Trajectory&
         Vector10d eigens = companion.eigenvalues().real();
         for (int i = 0; i < eigens.rows(); i++) {
             double x = eigens[i];
-            Eigen::Vector2d point = {x, spline.coefficients.dot(Vector6d{pow(x, 5), pow(x, 4), pow(x, 3), pow(x, 2), x, 1})};
-            points.push_back(point);
+            if (((spline.start.x() <= x) && (x <= spline.end.x())) || ((spline.start.x() >= x) && (x >= spline.end.x()))) {
+                Eigen::Vector2d point = {x, spline.coefficients.dot(Vector6d{pow(x, 5), pow(x, 4), pow(x, 3), pow(x, 2), x, 1})};
+                double dist = (point - Eigen::Vector2d{pose.x(), pose.y()}).norm();
+                if (abs(dist - lookAhead) < ERROR) {
+                    points.push_back(point);
+                }
+            }
         }
     }
     return points;
 }
 
 bool PathFollower::asyncFollow(const Trajectory& path, double lookAhead) {
+    std::vector<Eigen::Vector2d> candidates = getTargetCandidates(path, lookAhead);
     
 }
