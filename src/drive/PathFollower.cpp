@@ -31,8 +31,7 @@ std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Trajectory&
         companion.col(9) = (-coefficients/coefficients[coefficients.size()-1]).block(0, 0, 10, 1);
 
         Vector10d eigens = companion.eigenvalues().real();
-        for (int i = 0; i < eigens.rows(); i++) {
-            double x = eigens[i];
+        for (double x: eigens) {
             if (((spline.start.x() <= x) && (x <= spline.end.x())) || ((spline.start.x() >= x) && (x >= spline.end.x()))) {
                 Eigen::Vector2d point = {x, spline.coefficients.dot(Vector6d{pow(x, 5), pow(x, 4), pow(x, 3), pow(x, 2), x, 1})};
                 double dist = (point - Eigen::Vector2d{pose.x(), pose.y()}).norm();
