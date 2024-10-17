@@ -6,10 +6,16 @@
 #include <memory>
 #include <vector>
 
+PathFollower::PathFollower(double lookAhead, std::shared_ptr<ILocalizer> localizer, std::shared_ptr<IDriveTrain> drive) {
+    this->lookAhead = lookAhead;
+    this->localizer = localizer;
+    this->drive = drive;
+}
+
 std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Spline& spline) {
     std::vector<Eigen::Vector2d> points;
 
-    Eigen::Vector3d pose = localizer.lock()->getPose();
+    Eigen::Vector3d pose = localizer->getPose();
     
     Vector6d splineCoefficients = spline.coefficients;
     splineCoefficients[splineCoefficients.size() - 1] -= pose.y();
@@ -44,24 +50,24 @@ std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Spline& spl
     return points;
 }
 
-void PathFollower::followPath(std::weak_ptr<Trajectory> path) {
+void PathFollower::followPath(std::shared_ptr<Trajectory> path) {
     lastArcLength = 0;
     lastPoint.setZero();
     this->path = path;
 }
 
 bool PathFollower::update() {
-    if (!path.lock()) {
+    if (!path) {
         return false;
     }
 
-    localizer.lock()->update();
+    localizer->update();
     double sum = 0;
 
     double least = std::numeric_limits<double>::infinity();
     Eigen::Vector3d leastPoint = lastPoint;
 
-    for (const Spline& spline: path.lock()->splines) {
+    for (const Spline& spline: path->splines) {
         std::vector<Eigen::Vector2d> candidates = getTargetCandidates(spline);
         for (const Eigen::Vector2d& point: candidates) {
             double length = sum + arcLength(spline.coefficients, spline.start.x(), point.x());
@@ -75,8 +81,8 @@ bool PathFollower::update() {
     }
 
 
-    drive.lock()->setTarget(leastPoint);
+    drive->setTarget(leastPoint);
     
-    Eigen::Vector3d pose = localizer.lock()->getPose();
-    return (path.lock()->splines.end()->end - pose).norm() > ERROR;
+    Eigen::Vector3d pose = localizer->getPose();
+    return (path->splines.end()->end - pose).norm() > ERROR;
 }
