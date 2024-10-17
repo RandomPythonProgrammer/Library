@@ -8,7 +8,7 @@
 std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Trajectory& path, double lookAhead) {
     std::vector<Eigen::Vector2d> points;
 
-    Eigen::Vector3d pose = localizer.getPose();
+    Eigen::Vector3d pose = localizer.lock()->getPose();
     
     for (const Spline& spline: path.splines) {
         Vector6d splineCoefficients = spline.coefficients;
