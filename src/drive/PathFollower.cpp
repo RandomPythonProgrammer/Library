@@ -48,6 +48,7 @@ std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Spline& spl
 
 void PathFollower::followPath(std::weak_ptr<Trajectory> path) {
     lastArcLength = 0;
+    lastPoint.setZero();
     this->path = path;
 }
 
