@@ -9,6 +9,8 @@ struct Spline {
     double length;
 };
 
+double arcLength(const Eigen::Vector3d& coefficients, double start, double end);
+
 class SplineFactory {
 private:
     static Spline makeSpline(Vector6d coefficients, Eigen::Vector3d start, Eigen::Vector3d end);

@@ -1,9 +1,12 @@
 #include "pathing/Spline.h"
-#include "Eigen/src/Core/Matrix.h"
 #include "common/calc.h"
 
+double arcLength(const Eigen::Vector3d &coefficients, double start, double end) {
+    return integrate(start, end, [coefficients](double x){return sqrt(pow(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 2) + 1)});
+}
+
 Spline SplineFactory::makeSpline(Vector6d coefficients, Eigen::Vector3d start, Eigen::Vector3d end) {
-    return {coefficients, start, end, integrate(start.x(), end.x(), [coefficients](double x){return sqrt(pow(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 2) + 1);})};
+    return {coefficients, start, end, arcLength(coefficients, start.x(), end.x())};
 }
 
 Spline SplineFactory::makeSpline(Eigen::Vector3d start, Eigen::Vector3d end) {

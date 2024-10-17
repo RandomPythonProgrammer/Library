@@ -15,8 +15,18 @@ using Matrix10d = Eigen::Matrix<double, 10, 10>;
 class PathFollower {
 private:
     std::weak_ptr<ILocalizer> localizer;
-    std::weak_ptr<DriveTrain> drive;
-    std::vector<Eigen::Vector2d> getTargetCandidates(const Trajectory& path, double lookAhead);
-public: 
-    bool asyncFollow(const Trajectory& path, double lookAhead);
+    std::weak_ptr<IDriveTrain> drive;
+
+    std::weak_ptr<Trajectory> path;
+    Eigen::Vector2d lastPoint;
+
+    double lastArcLength;
+    double lookAhead;
+
+    std::vector<Eigen::Vector2d> getTargetCandidates(const Spline& spline);
+public:
+    PathFollower(double lookAhead, std::weak_ptr<ILocalizer>, std::weak_ptr<IDriveTrain>);
+    void followPath(std::weak_ptr<Trajectory> path);
+    void stop();
+    bool update();
 };

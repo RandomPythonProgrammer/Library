@@ -2,8 +2,8 @@
 
 #include <Eigen/Eigen>
 
-class DriveTrain {
+class IDriveTrain {
 public:
-    virtual ~DriveTrain() = 0;
+    virtual ~IDriveTrain() = 0;
     virtual void setTarget(const Eigen::Vector3d& point) = 0;
 };
