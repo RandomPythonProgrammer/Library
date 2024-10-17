@@ -1,5 +1,4 @@
 #include "drive/PathFollower.h"
-#include "Eigen/src/Core/Matrix.h"
 #include "pathing/Spline.h"
 #include "pathing/Trajectory.h"
 #include <cmath>
@@ -60,14 +59,14 @@ bool PathFollower::update() {
     double sum = 0;
 
     double least = std::numeric_limits<double>::infinity();
-    Eigen::Vector2d leastPoint = lastPoint;
+    Eigen::Vector3d leastPoint = lastPoint;
 
     for (const Spline& spline: path.lock()->splines) {
         std::vector<Eigen::Vector2d> candidates = getTargetCandidates(spline);
         for (const Eigen::Vector2d& point: candidates) {
             double length = sum + arcLength(spline.coefficients, spline.start.x(), point.x());
             if (length > lastArcLength && length < least) {
-                lastPoint = point;
+                lastPoint = {point.x(), point.y(), tangent(spline.coefficients,point.x())};
                 least = length;
             }
         }
@@ -75,8 +74,9 @@ bool PathFollower::update() {
         sum += spline.length;
     }
 
+
     drive.lock()->setTarget(leastPoint);
     
     Eigen::Vector3d pose = localizer.lock()->getPose();
-    return (path.lock()->splines.end()->end - Eigen::Vector2d{pose.x(), pose.y()}).norm() > ERROR;
+    return (path.lock()->splines.end()->end - pose).norm() > ERROR;
 }

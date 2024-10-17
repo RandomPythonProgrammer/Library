@@ -1,9 +1,15 @@
 #include "pathing/Spline.h"
 #include "common/calc.h"
+#include <cmath>
 
-double arcLength(const Eigen::Vector3d &coefficients, double start, double end) {
+double arcLength(const Vector6d &coefficients, double start, double end) {
     return integrate(start, end, [coefficients](double x){return sqrt(pow(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 2) + 1);});
 }
+
+double tangent(const Vector6d &coefficients, double x) {
+    return atan2(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 1);
+}
+
 
 Spline SplineFactory::makeSpline(Vector6d coefficients, Eigen::Vector3d start, Eigen::Vector3d end) {
     return {coefficients, start, end, arcLength(coefficients, start.x(), end.x())};

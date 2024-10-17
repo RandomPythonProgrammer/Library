@@ -17,7 +17,7 @@ private:
     std::weak_ptr<IDriveTrain> drive;
 
     std::weak_ptr<Trajectory> path;
-    Eigen::Vector2d lastPoint;
+    Eigen::Vector3d lastPoint;
 
     double lastArcLength;
     double lookAhead;
