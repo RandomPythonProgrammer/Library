@@ -80,9 +80,8 @@ bool PathFollower::update() {
         sum += spline.length;
     }
 
-
-    drive->setTarget(leastPoint);
-    
     Eigen::Vector3d pose = localizer->getPose();
+    drive->setTarget(leastPoint-pose);
+    
     return (path->splines.end()->end - pose).norm() > ERROR;
 }
