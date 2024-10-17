@@ -4,6 +4,6 @@
 
 class IDriveTrain {
 public:
-    virtual ~IDriveTrain() = 0;
+    virtual ~IDriveTrain() = default;
     virtual void setTarget(const Eigen::Vector3d& point) = 0;
 };

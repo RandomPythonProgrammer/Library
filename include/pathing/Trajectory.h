@@ -4,4 +4,5 @@
 
 struct Trajectory {
     std::vector<Spline> splines;
+    Trajectory(const std::vector<Spline>& splines): splines{splines} {}
 };

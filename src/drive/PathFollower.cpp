@@ -6,12 +6,6 @@
 #include <memory>
 #include <vector>
 
-PathFollower::PathFollower(double lookAhead, std::shared_ptr<ILocalizer> localizer, std::shared_ptr<IDriveTrain> drive) {
-    this->lookAhead = lookAhead;
-    this->localizer = localizer;
-    this->drive = drive;
-}
-
 std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Spline& spline) {
     std::vector<Eigen::Vector2d> points;
 
@@ -34,7 +28,7 @@ std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Spline& spl
     for (int i = 1; i < companion.rows(); i++) {
         companion.row(i)[i-1]= 1;
     }
-    companion.col(9) = (-coefficients/coefficients[coefficients.size()-1]).block(0, 0, 10, 1);
+    companion.col(9) = (-coefficients/coefficients[coefficients.size() - 1]).block(0, 0, 10, 1);
 
     Vector10d eigens = companion.eigenvalues().real();
     for (double x: eigens) {
@@ -72,7 +66,7 @@ bool PathFollower::update() {
         for (const Eigen::Vector2d& point: candidates) {
             double length = sum + arcLength(spline.coefficients, spline.start.x(), point.x());
             if (length > lastArcLength && length < least) {
-                lastPoint = {point.x(), point.y(), tangent(spline.coefficients,point.x())};
+                leastPoint = {point.x(), point.y(), tangent(spline.coefficients,point.x())};
                 least = length;
             }
         }
@@ -80,8 +74,11 @@ bool PathFollower::update() {
         sum += spline.length;
     }
 
+    lastArcLength = least;
+    lastPoint = leastPoint;
+
     Eigen::Vector3d pose = localizer->getPose();
     drive->setTarget(leastPoint-pose);
     
-    return (path->splines.end()->end - pose).norm() > ERROR;
+    return (path->splines.back().end - pose).norm() > acceptableError;
 }

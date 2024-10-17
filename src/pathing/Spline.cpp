@@ -10,6 +10,10 @@ double tangent(const Vector6d &coefficients, double x) {
     return atan2(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 1);
 }
 
+double getY(const Vector6d& coefficients, double x) {
+    return coefficients.dot(Vector6d{pow(x, 5), pow(x, 4), pow(x, 3), pow(x, 2), x, 1});
+}
+
 
 Spline SplineFactory::makeSpline(Vector6d coefficients, Eigen::Vector3d start, Eigen::Vector3d end) {
     return {coefficients, start, end, arcLength(coefficients, start.x(), end.x())};

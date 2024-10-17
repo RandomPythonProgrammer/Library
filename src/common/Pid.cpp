@@ -1,10 +1,6 @@
 #include "common/Pid.h"
-#include <chrono>
 #include <cmath>
-
-long getMillis() {
-    return  std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-}
+#include "common/time.h"
 
 void PID::setCoefficients(double p, double i, double d) {
     this->p = p;

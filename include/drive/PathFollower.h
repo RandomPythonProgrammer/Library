@@ -22,9 +22,11 @@ private:
     double lastArcLength;
     double lookAhead;
 
+    double acceptableError;
+
     std::vector<Eigen::Vector2d> getTargetCandidates(const Spline& spline);
 public:
-    PathFollower(double lookAhead, std::shared_ptr<ILocalizer>, std::shared_ptr<IDriveTrain>);
+    PathFollower(double lookAhead, std::shared_ptr<ILocalizer> localizer, std::shared_ptr<IDriveTrain> drive, double acceptableError): lookAhead{lookAhead}, localizer{localizer}, drive{drive}, acceptableError{acceptableError} {}
     void followPath(std::shared_ptr<Trajectory> path);
     void stop();
     bool update();

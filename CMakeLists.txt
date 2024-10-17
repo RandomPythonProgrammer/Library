@@ -25,7 +25,23 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/RoboOp)
 install(EXPORT RoboOpConfig DESTINATION share/RoboOp/cmake)
 export(TARGETS RoboOp FILE RoboOpConfig.cmake)
 
+include(FetchContent)
+
+FetchContent_Declare(matplotplusplus
+        GIT_REPOSITORY https://github.com/alandefreitas/matplotplusplus
+        GIT_TAG origin/master
+) 
+
+FetchContent_GetProperties(matplotplusplus)
+if(NOT matplotplusplus_POPULATED)
+    FetchContent_Populate(matplotplusplus)
+    add_subdirectory(${matplotplusplus_SOURCE_DIR} ${matplotplusplus_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
+
 file(GLOB_RECURSE TEST_SOURCES "test_src/*.cpp" "src/*.cpp")
 add_executable(RoboOpTest ${TEST_SOURCES})
 target_include_directories(RoboOpTest PRIVATE include)
 target_include_directories(RoboOpTest PRIVATE test_include)
+
+target_link_libraries(RoboOpTest PRIVATE matplot)
