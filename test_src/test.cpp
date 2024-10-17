@@ -47,8 +47,8 @@ TEST_CASE("Visualizer PathFollowing", "[Spline][PathFollower]") {
             std::vector<double> theta = matplot::linspace(0, 2 * matplot::pi);
             std::vector<double> x = matplot::transform(theta, [=](auto theta) { return lookAhead * cos(theta) + pose.x(); });
             std::vector<double> y = matplot::transform(theta, [=](auto theta) { return lookAhead * sin(theta) + pose.y(); });
-            //matplot::plot(x, y);
-            //matplot::hold(matplot::on);
+            matplot::plot(x, y);
+            matplot::hold(matplot::on);
 
             Eigen::Vector3d newPose = dummyLocalizer->getPose() + dummyDrive->getVelocity() * dt;
             tx.push_back(newPose.x());
