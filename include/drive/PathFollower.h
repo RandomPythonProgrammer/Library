@@ -1,5 +1,4 @@
 #pragma once
-#include "common/Pid.h"
 #include "drive/ILocalizer.h"
 #include "pathing/Trajectory.h"
 #include "drive/IDriveTrain.h"
