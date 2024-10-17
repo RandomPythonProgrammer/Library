@@ -52,6 +52,10 @@ void PathFollower::followPath(std::weak_ptr<Trajectory> path) {
 }
 
 bool PathFollower::update() {
+    if (!path.lock()) {
+        return false;
+    }
+
     localizer.lock()->update();
     double sum = 0;
 
@@ -72,4 +76,7 @@ bool PathFollower::update() {
     }
 
     drive.lock()->setTarget(leastPoint);
+    
+    Eigen::Vector3d pose = localizer.lock()->getPose();
+    return (path.lock()->splines.end()->end - Eigen::Vector2d{pose.x(), pose.y()}).norm() > ERROR;
 }
