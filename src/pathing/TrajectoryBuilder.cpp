@@ -1,7 +1,7 @@
 #include "pathing/TrajectoryBuilder.h"
 #include "pathing/Trajectory.h"
 
-TrajectoryBuilder& TrajectoryBuilder::To(const Eigen::Vector3d pose) {
+TrajectoryBuilder& TrajectoryBuilder::to(const Eigen::Vector3d pose) {
     if (splines.empty()) {
         splines.push_back(std::move(SplineFactory::makeSpline(start, pose)));
     } else {

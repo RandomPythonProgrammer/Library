@@ -1,7 +1,5 @@
 #include "DummpyLocalizer.h"
 #include "DummyDrive.h"
-#include "drive/IDriveTrain.h"
-#include "drive/ILocalizer.h"
 #include "drive/PathFollower.h"
 #include "matplot/freestanding/axes_functions.h"
 #include "matplot/freestanding/plot.h"
@@ -20,11 +18,13 @@
 TEST_CASE("Visualizer PathFollowing", "[Spline][PathFollower]") {
     Eigen::Vector3d start{0, 0, 0};
     std::shared_ptr<Trajectory> path = TrajectoryBuilderFactory::create(start)
-        .To({10, 10, 0})
+        .to({10, 10, 0.25})
+        .to({20, 10, 0})
         .build();
+
+    double lookAhead = 1.5;
     
     for (const Spline& spline: path->splines) {
-        double lookAhead = 1.5;
 
         std::vector<double> x = matplot::linspace(spline.start.x(), spline.end.x());
         std::vector<double> y = matplot::transform(x, [spline](double x){return getY(spline.coefficients, x);});
@@ -57,8 +57,7 @@ TEST_CASE("Visualizer PathFollowing", "[Spline][PathFollower]") {
         }
 
         matplot::plot(tx, ty, "xr");
-
-        matplot::axis(matplot::equal);
-        matplot::show();
     }
+    matplot::axis(matplot::equal);
+    matplot::show();
 }

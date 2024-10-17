@@ -10,7 +10,7 @@ private:
     Eigen::Vector3d start;
 public:
     TrajectoryBuilder(const Eigen::Vector3d& start): start{start}{}
-    TrajectoryBuilder& To(const Eigen::Vector3d pose);
+    TrajectoryBuilder& to(const Eigen::Vector3d pose);
     std::shared_ptr<Trajectory> build();
 };
 
