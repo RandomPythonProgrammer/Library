@@ -1,9 +1,9 @@
-#include "DummpyLocalizer.h"
+#include "DummyLocalizer.h"
 
-void DummyLocalizer::setPosition(const Eigen::Vector3d& position) {
+void DummyLocalizer::setPosition(const Pose2d& position) {
     this->position = position;
 }
 
-Eigen::Vector3d DummyLocalizer::getPose() {
+Pose2d DummyLocalizer::getPose() {
     return position;
 }

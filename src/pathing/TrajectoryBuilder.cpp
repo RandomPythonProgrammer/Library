@@ -1,7 +1,7 @@
 #include "pathing/TrajectoryBuilder.h"
 #include "pathing/Trajectory.h"
 
-TrajectoryBuilder& TrajectoryBuilder::to(const Eigen::Vector3d pose) {
+TrajectoryBuilder& TrajectoryBuilder::to(const Pose2d pose) {
     if (splines.empty()) {
         splines.push_back(std::move(SplineFactory::makeSpline(start, pose)));
     } else {
@@ -13,6 +13,6 @@ std::shared_ptr<Trajectory> TrajectoryBuilder::build() {
     return std::make_shared<Trajectory>(splines);
 }
 
-TrajectoryBuilder TrajectoryBuilderFactory::create(const Eigen::Vector3d &start) {
+TrajectoryBuilder TrajectoryBuilderFactory::create(const Pose2d &start) {
     return TrajectoryBuilder(start);
 }

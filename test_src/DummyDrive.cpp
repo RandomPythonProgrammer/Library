@@ -1,13 +1,13 @@
 #include "DummyDrive.h"
 
-void DummyDrive::setTarget(const Eigen::Vector3d& point) {
-    double norm = point.norm();
+void DummyDrive::setTarget(const Pose2d& point) {
+    double norm = point.position.norm();
     velocity.setZero();
     if (norm > 0) {
-        velocity = maxVelocity * (point/norm);
+        velocity = {maxVelocity * (point.position/norm), point.rotation};
     }
 }
 
-Eigen::Vector3d DummyDrive::getVelocity() {
+Pose2d DummyDrive::getVelocity() {
     return velocity;
 }

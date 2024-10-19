@@ -1,6 +1,5 @@
-#include "DummpyLocalizer.h"
-#include "DummyDrive.h"
-#include "drive/PathFollower.h"
+
+#include "common/Pose2d.h"
 #include "matplot/freestanding/axes_functions.h"
 #include "matplot/freestanding/plot.h"
 #include "matplot/util/common.h"
@@ -15,48 +14,19 @@
 #include "catch.hpp"
 #include <matplot/matplot.h>
 
-TEST_CASE("Visualizer PathFollowing", "[Spline][PathFollower]") {
-    Eigen::Vector3d start{0, 0, 0};
+TEST_CASE("Visualizer Spline", "[Spline]") {
+    Pose2d start{{0, 0}, 0};
     std::shared_ptr<Trajectory> path = TrajectoryBuilderFactory::create(start)
-        .to({10, 10, 0.25})
-        .to({20, 10, 0})
+        .to({{10, 10}, 0.25})
+        .to({{20, 10}, 0})
         .build();
 
-    double lookAhead = 1.5;
-    
     for (const Spline& spline: path->splines) {
-
-        std::vector<double> x = matplot::linspace(spline.start.x(), spline.end.x());
+        std::vector<double> x = matplot::linspace(spline.start.position.x(), spline.end.position.x());
         std::vector<double> y = matplot::transform(x, [spline](double x){return getY(spline.coefficients, x);});
-        matplot::plot(x, y, "-og");
+        matplot::plot(x, y, "-g");
         matplot::hold(matplot::on);
 
-        std::shared_ptr<DummyLocalizer> dummyLocalizer{new DummyLocalizer()};
-        std::shared_ptr<DummyDrive> dummyDrive{new DummyDrive(10)};
-
-        PathFollower follower{lookAhead, dummyLocalizer, dummyDrive, 0.5};
-        follower.followPath(path);
-        
-        double dt = 50/1e3;
-
-        std::vector<double> tx;
-        std::vector<double> ty;
-
-        while (follower.update()) {
-            Eigen::Vector3d pose = dummyLocalizer->getPose();
-            std::vector<double> theta = matplot::linspace(0, 2 * matplot::pi);
-            std::vector<double> x = matplot::transform(theta, [=](auto theta) { return lookAhead * cos(theta) + pose.x(); });
-            std::vector<double> y = matplot::transform(theta, [=](auto theta) { return lookAhead * sin(theta) + pose.y(); });
-            matplot::plot(x, y);
-            matplot::hold(matplot::on);
-
-            Eigen::Vector3d newPose = dummyLocalizer->getPose() + dummyDrive->getVelocity() * dt;
-            tx.push_back(newPose.x());
-            ty.push_back(newPose.y());
-            dummyLocalizer->setPosition(newPose);
-        }
-
-        matplot::plot(tx, ty, "xr");
     }
     matplot::axis(matplot::equal);
     matplot::show();
