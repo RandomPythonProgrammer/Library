@@ -30,9 +30,28 @@ while (follower.update()) {
   // Other tasks
 }
 ```
+### Tank Drive
+Tank drive implementation for path following.
+```cpp
+class TankDrive: public IDriveTrain {
+private:
+    std::shared_ptr<MotorGroup> left;
+    std::shared_ptr<MotorGroup> right;
+    std::shared_ptr<PID> translationalPID, rotationalPID;
+    Eigen::Vector2d dimensions;
+public:
+    TankDrive(
+        const Eigen::Vector2d& dimensions,
+        const std::shared_ptr<MotorGroup>& left,
+        const std::shared_ptr<MotorGroup>& right,
+        const std::shared_ptr<PID>& rotationalPID,
+        const std::shared_ptr<PID>& translationalPID
+    ): dimensions{dimensions}, left{left}, right{right}, rotationalPID{rotationalPID}, translationalPID{translationalPID}{}
+    void setTarget(const Pose2d& point) override;
+};
+```
 ![PathFollowing](https://github.com/user-attachments/assets/bde5b021-e757-4931-8267-993c2b3dca61)
 ### Future Plans
-- Drivetrain implementations
 - Localization implementations
 - Motion profiling
-- GUI visualizer
+- GUI visualizer (Separate Project)
