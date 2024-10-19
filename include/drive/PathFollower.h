@@ -1,4 +1,5 @@
 #pragma once
+#include "common/Pose2d.h"
 #include "drive/ILocalizer.h"
 #include "pathing/Trajectory.h"
 #include "drive/IDriveTrain.h"
@@ -17,7 +18,7 @@ private:
     std::shared_ptr<IDriveTrain> drive;
 
     std::shared_ptr<Trajectory> path;
-    Eigen::Vector3d lastPoint;
+    Pose2d lastPoint;
 
     double lastArcLength;
     double lookAhead;

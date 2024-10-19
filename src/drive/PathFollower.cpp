@@ -9,10 +9,10 @@
 std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Spline& spline) {
     std::vector<Eigen::Vector2d> points;
 
-    Eigen::Vector3d pose = localizer->getPose();
+    Pose2d pose = localizer->getPose();
     
     Vector6d splineCoefficients = spline.coefficients;
-    splineCoefficients[splineCoefficients.size() - 1] -= pose.y();
+    splineCoefficients[splineCoefficients.size() - 1] -= pose.position.y();
 
     Vector11d coefficients = Vector11d::Zero();
     for (int i = 0; i < splineCoefficients.size(); i++) {
@@ -21,8 +21,8 @@ std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Spline& spl
         }
     }
     coefficients[2]+=1;
-    coefficients[1]-=2*pose.x();
-    coefficients[0]+=pow(pose.x(),2) - pow(lookAhead, 2);
+    coefficients[1]-=2*pose.position.x();
+    coefficients[0]+=pow(pose.position.x(),2) - pow(lookAhead, 2);
     Matrix10d companion = Matrix10d::Zero();
 
     for (int i = 1; i < companion.rows(); i++) {
@@ -32,9 +32,9 @@ std::vector<Eigen::Vector2d> PathFollower::getTargetCandidates(const Spline& spl
 
     Vector10d eigens = companion.eigenvalues().real();
     for (double x: eigens) {
-        if (((spline.start.x() <= x) && (x <= spline.end.x())) || ((spline.start.x() >= x) && (x >= spline.end.x()))) {
+        if (((spline.start.position.x() <= x) && (x <= spline.end.position.x())) || ((spline.start.position.x() >= x) && (x >= spline.end.position.x()))) {
             Eigen::Vector2d point = {x, spline.coefficients.dot(Vector6d{pow(x, 5), pow(x, 4), pow(x, 3), pow(x, 2), x, 1})};
-            double dist = (point - Eigen::Vector2d{pose.x(), pose.y()}).norm();
+            double dist = (point - Eigen::Vector2d{pose.position.x(), pose.position.y()}).norm();
             if (abs(dist - lookAhead) < ERROR) {
                 points.push_back(point);
             }
@@ -59,14 +59,14 @@ bool PathFollower::update() {
     double sum = 0;
 
     double least = std::numeric_limits<double>::infinity();
-    Eigen::Vector3d leastPoint = lastPoint;
+    Pose2d leastPoint = lastPoint;
 
     for (const Spline& spline: path->splines) {
         std::vector<Eigen::Vector2d> candidates = getTargetCandidates(spline);
         for (const Eigen::Vector2d& point: candidates) {
-            double length = sum + arcLength(spline.coefficients, spline.start.x(), point.x());
+            double length = sum + arcLength(spline.coefficients, spline.start.position.x(), point.x());
             if (length > lastArcLength && length < least) {
-                leastPoint = {point.x(), point.y(), tangent(spline.coefficients,point.x())};
+                leastPoint = {point, tangent(spline.coefficients,point.x())};
                 least = length;
             }
         }
@@ -77,8 +77,8 @@ bool PathFollower::update() {
     lastArcLength = least;
     lastPoint = leastPoint;
 
-    Eigen::Vector3d pose = localizer->getPose();
+    Pose2d pose = localizer->getPose();
     drive->setTarget(leastPoint-pose);
     
-    return (path->splines.back().end - pose).norm() > acceptableError;
+    return (path->splines.back().end - pose).dist()  > acceptableError;
 }

@@ -1,11 +1,12 @@
 #pragma once
+#include "common/Pose2d.h"
 #include <Eigen/Eigen>
 
 using Vector6d = Eigen::Matrix<double, 6, 1>;
 
 struct Spline {
     Vector6d coefficients; 
-    Eigen::Vector3d start, end;
+    Pose2d start, end;
     double length;
 };
 
@@ -16,8 +17,8 @@ double getY(const Vector6d& coefficients, double x);
 
 class SplineFactory {
 private:
-    static Spline makeSpline(Vector6d coefficients, Eigen::Vector3d start, Eigen::Vector3d end);
+    static Spline makeSpline(Vector6d coefficients, Pose2d start, Pose2d end);
 public:
-    static Spline makeSpline(Eigen::Vector3d start, Eigen::Vector3d end);
-    static Spline makeSpline(const Spline& start, Eigen::Vector3d end);
+    static Spline makeSpline(Pose2d start, Pose2d end);
+    static Spline makeSpline(const Spline& start, Pose2d end);
 };

@@ -7,13 +7,13 @@
 class TrajectoryBuilder {
 private:
     std::vector<Spline> splines;
-    Eigen::Vector3d start;
+    Pose2d start;
 public:
-    TrajectoryBuilder(const Eigen::Vector3d& start): start{start}{}
-    TrajectoryBuilder& to(const Eigen::Vector3d pose);
+    TrajectoryBuilder(const Pose2d& start): start{start}{}
+    TrajectoryBuilder& to(const Pose2d pose);
     std::shared_ptr<Trajectory> build();
 };
 
 struct TrajectoryBuilderFactory {
-    static TrajectoryBuilder create(const Eigen::Vector3d& start);
+    static TrajectoryBuilder create(const Pose2d& start);
 };

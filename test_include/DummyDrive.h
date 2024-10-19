@@ -3,10 +3,10 @@
 
 class DummyDrive: public IDriveTrain {
 private:
-    Eigen::Vector3d velocity;
+    Pose2d velocity;
     double maxVelocity;
 public:
     DummyDrive(double velocity): maxVelocity{velocity} {}
-    void setTarget(const Eigen::Vector3d& point) override;
-    Eigen::Vector3d getVelocity();
+    void setTarget(const Pose2d& point) override;
+    Pose2d getVelocity();
 };
