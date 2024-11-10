@@ -13,6 +13,7 @@ struct Spline {
 double arcLength(const Vector6d& coefficients, double start, double end);
 double tangent(const Vector6d& coefficients, double x);
 double getY(const Vector6d& coefficients, double x);
+Pose2d poseByArcLength(const Spline& spline, double length);
 
 
 class SplineFactory {

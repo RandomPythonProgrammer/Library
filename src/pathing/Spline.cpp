@@ -14,6 +14,16 @@ double getY(const Vector6d& coefficients, double x) {
     return coefficients.dot(Vector6d{pow(x, 5), pow(x, 4), pow(x, 3), pow(x, 2), x, 1});
 }
 
+Pose2d poseByArcLength(const Spline& spline, double length) {
+    double al = 0;
+    double x = spline.start.position.x();
+    while (al < length) {
+        al += arcLength(spline.coefficients, x, x+H_STEP);
+        x+=H_STEP;
+    }
+    return {{x, getY(spline.coefficients, x)}, tangent(spline.coefficients, x)};
+}
+
 
 Spline SplineFactory::makeSpline(Vector6d coefficients, Pose2d start, Pose2d end) {
     return {coefficients, start, end, arcLength(coefficients, start.position.x(), end.position.x())};
