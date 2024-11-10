@@ -3,7 +3,7 @@
 #include <cmath>
 
 double arcLength(const Vector6d &coefficients, double start, double end) {
-    return integrate(start, end, [coefficients](double x){return sqrt(pow(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 2) + 1);});
+    return std::abs(integrate(start, end, [coefficients](double x){return sqrt(pow(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 2) + 1);}));
 }
 
 double tangent(const Vector6d &coefficients, double x) {
@@ -16,10 +16,14 @@ double getY(const Vector6d& coefficients, double x) {
 
 Pose2d poseByArcLength(const Spline& spline, double length) {
     double al = 0;
+    int sign = 1;
     double x = spline.start.position.x();
+    if (spline.start.position.x() > spline.end.position.x()) {
+        sign = -1;
+    }
     while (al < length) {
-        al += arcLength(spline.coefficients, x, x+H_STEP);
-        x+=H_STEP;
+        al += arcLength(spline.coefficients, x, x+sign*H_STEP);
+        x+=sign*H_STEP;
     }
     return {{x, getY(spline.coefficients, x)}, tangent(spline.coefficients, x)};
 }
