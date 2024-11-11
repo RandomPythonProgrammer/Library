@@ -5,8 +5,8 @@
 using Vector6d = Eigen::Matrix<double, 6, 1>;
 
 struct Spline {
-    Vector6d yCoefficients;
-    Vector6d xCoefficients; 
+    Vector6d xCoefficients;
+    Vector6d yCoefficients; 
     Pose2d start, end;
     double length;
 };
