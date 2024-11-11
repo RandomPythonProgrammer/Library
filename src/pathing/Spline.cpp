@@ -28,7 +28,7 @@ Eigen::Vector2d get(const Vector6d& xCoefficients, const Vector6d& yCoefficients
 Pose2d poseByArcLength(const Spline& spline, double length) {
     double al = 0;
     double t = 0;
-    while (al < length) {
+    while (al < length and t <= 1) {
         al += arcLength(spline.xCoefficients, spline.yCoefficients, t, t+H_STEP);
         t+=H_STEP;
     }
