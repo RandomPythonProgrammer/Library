@@ -11,7 +11,7 @@ private:
 public:
     TrajectoryBuilder(const Pose2d& start): start{start}{}
     TrajectoryBuilder& to(const Pose2d pose);
-    std::shared_ptr<Trajectory> build();
+    std::shared_ptr<Trajectory> build() const;
 };
 
 struct TrajectoryBuilderFactory {

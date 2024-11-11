@@ -9,12 +9,12 @@ struct Spline {
     Vector6d yCoefficients; 
     Pose2d start, end;
     double length;
-};
 
-double arcLength(const Vector6d& xCoefficients, const Vector6d& yCoefficients, double start, double end);
-double tangent(const Vector6d& xCoefficients, const Vector6d& yCoefficients, double t);
-Eigen::Vector2d get(const Vector6d& xCoefficients, const Vector6d& yCoefficients, double t);
-Pose2d poseByArcLength(const Spline& spline, double length);
+    double arcLength(double start, double end) const;
+    double tangent(double t) const;
+    Eigen::Vector2d get(double t) const;
+    Pose2d poseByArcLength(double length) const;
+};
 
 
 class SplineFactory {

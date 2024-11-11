@@ -9,5 +9,5 @@ struct Pose2d {
     static Pose2d Zero();
     Pose2d operator+(const Pose2d& other);
     Pose2d operator-(const Pose2d& other);
-    double dist();
+    double dist() const;
 };

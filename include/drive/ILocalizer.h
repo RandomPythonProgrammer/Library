@@ -4,6 +4,6 @@
 class ILocalizer {
 public:
     virtual ~ILocalizer() = default;
-    virtual Pose2d getPose() = 0;
+    virtual Pose2d getPose() const = 0;
     virtual void update() = 0;
 };

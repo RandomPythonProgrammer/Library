@@ -9,7 +9,7 @@ TrajectoryBuilder& TrajectoryBuilder::to(const Pose2d pose) {
     }
     return *this;
 }
-std::shared_ptr<Trajectory> TrajectoryBuilder::build() {
+std::shared_ptr<Trajectory> TrajectoryBuilder::build() const {
     return std::make_shared<Trajectory>(splines);
 }
 

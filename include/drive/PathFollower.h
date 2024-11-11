@@ -1,16 +1,17 @@
 #pragma once
+#include "common/MotionProfile.h"
 #include "common/Pose2d.h"
+#include "common/time.h"
 #include "drive/ILocalizer.h"
 #include "pathing/Trajectory.h"
 #include "drive/IDriveTrain.h"
 #include <memory>
 #include <vector>
 
-static const double ERROR = 0.01;
-
-using Vector11d = Eigen::Matrix<double, 11, 1>;
-using Vector10d = Eigen::Matrix<double, 10, 1>;
-using Matrix10d = Eigen::Matrix<double, 10, 10>;
+struct DriveParameters {
+    double b, z, vd, wd;
+    double maxVelocity, maxAcceleration;
+};
 
 class PathFollower {
 private:
@@ -18,16 +19,13 @@ private:
     std::shared_ptr<IDriveTrain> drive;
 
     std::shared_ptr<Trajectory> path;
-    Pose2d lastPoint;
+    MotionProfile profile;
 
-    double lastArcLength;
-    double lookAhead;
+    DriveParameters parameters;
 
-    double acceptableError;
-
-    std::vector<Eigen::Vector2d> getTargetCandidates(const Spline& spline);
+    long lastTime;
 public:
-    PathFollower(double lookAhead, std::shared_ptr<ILocalizer> localizer, std::shared_ptr<IDriveTrain> drive, double acceptableError): lookAhead{lookAhead}, localizer{localizer}, drive{drive}, acceptableError{acceptableError} {}
+    PathFollower(std::shared_ptr<ILocalizer> localizer, std::shared_ptr<IDriveTrain> drive, DriveParameters parameters): localizer{localizer}, drive{drive}, parameters{parameters}, lastTime{getMillis()} {}
     void followPath(std::shared_ptr<Trajectory> path);
     void stop();
     bool update();
