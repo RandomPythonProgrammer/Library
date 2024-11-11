@@ -11,8 +11,8 @@ struct Spline {
     double length;
 };
 
-double arcLength(const Spline&, double start, double end);
-double tangent(const Spline&, double t);
+double arcLength(const Vector6d& xCoefficients, const Vector6d& yCoefficients, double start, double end);
+double tangent(const Vector6d& xCoefficients, const Vector6d& yCoefficients, double t);
 Eigen::Vector2d get(const Vector6d& xCoefficients, const Vector6d& yCoefficients, double t);
 Pose2d poseByArcLength(const Spline& spline, double length);
 

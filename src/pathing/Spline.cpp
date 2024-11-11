@@ -37,7 +37,7 @@ Pose2d poseByArcLength(const Spline& spline, double length) {
 
 
 Spline SplineFactory::makeSpline(Vector6d xCoefficients, Vector6d yCoefficients, Pose2d start, Pose2d end) {
-    return {xCoefficients, yCoefficients, start, end, arcLength(xCoefficients, yCoefficients, start.position.x(), end.position.x())};
+    return {xCoefficients, yCoefficients, start, end, arcLength(xCoefficients, yCoefficients, 0, 1)};
 }
 
 Spline SplineFactory::makeSpline(Pose2d start, Pose2d end) {
