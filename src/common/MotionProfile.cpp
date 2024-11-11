@@ -1,7 +1,7 @@
 #include "common/MotionProfile.h"
 #include <cmath>
 
-double MotionProfile::getX(double t) {
+double MotionProfile::getX(double t) const {
     double t1 = 2 * maxVelocity / maxAcceleration;
     double da = std::pow(maxVelocity, 2)/(2 * maxAcceleration);
     double t2 = getDuration() - t1;
@@ -14,7 +14,7 @@ double MotionProfile::getX(double t) {
     }
 }
 
-double MotionProfile::getDuration() {
+double MotionProfile::getDuration() const {
     double d = std::abs(end - start);
     double da = std::pow(maxVelocity, 2)/(2 * maxAcceleration);
     if (d < da) {

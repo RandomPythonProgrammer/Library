@@ -5,6 +5,6 @@ struct MotionProfile {
     double maxVelocity;
     double maxAcceleration;
     
-    double getX(double t);
-    double getDuration();
+    double getX(double t) const;
+    double getDuration() const;
 };

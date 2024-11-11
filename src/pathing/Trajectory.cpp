@@ -1,6 +1,6 @@
 #include "pathing/Trajectory.h"
 
-Pose2d Trajectory::poseByArcLength(double length) {
+Pose2d Trajectory::poseByArcLength(double length) const {
     int currentSpline = 0;
     double currentLength = 0;
     for (;currentSpline < splines.size(); currentSpline++) {
@@ -12,7 +12,7 @@ Pose2d Trajectory::poseByArcLength(double length) {
     return splines[currentSpline].poseByArcLength(length-currentLength);
 }
 
-double Trajectory::getLength() {
+double Trajectory::getLength() const {
     double arclength = 0;
 
     for (const auto& spline: splines) {

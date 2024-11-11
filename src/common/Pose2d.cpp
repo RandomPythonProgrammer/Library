@@ -18,6 +18,6 @@ Pose2d Pose2d::Zero() {
     return {Eigen::Vector2d::Zero(), 0};
 }
 
-double Pose2d::dist() {
+double Pose2d::dist() const {
     return std::sqrt(std::pow(position.norm(), 2) + std::pow(rotation, 2));
 }

@@ -10,10 +10,10 @@ struct Spline {
     Pose2d start, end;
     double length;
 
-    double arcLength(double start, double end);
-    double tangent(double t);
-    Eigen::Vector2d get(double t);
-    Pose2d poseByArcLength(double length);
+    double arcLength(double start, double end) const;
+    double tangent(double t) const;
+    Eigen::Vector2d get(double t) const;
+    Pose2d poseByArcLength(double length) const;
 };
 
 

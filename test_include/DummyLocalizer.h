@@ -7,6 +7,6 @@ private:
 public:
     DummyLocalizer(Pose2d pose): position{pose} {}
     void setPosition(const Pose2d& position);
-    Pose2d getPose() override;
+    Pose2d getPose() const override;
     void update() override {};
 };

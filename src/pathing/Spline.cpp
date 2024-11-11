@@ -2,7 +2,7 @@
 #include "common/calc.h"
 #include <cmath>
 
-double Spline::arcLength(double start, double end) {
+double Spline::arcLength(double start, double end) const {
     return std::abs(integrate(start, end, [&](double t){
         return sqrt(
             pow(xCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0}), 2)
@@ -11,21 +11,21 @@ double Spline::arcLength(double start, double end) {
     }));
 }
 
-double Spline::tangent(double t) {
+double Spline::tangent(double t) const {
     return atan2(
         xCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0}),
         yCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0})
     );
 }
 
-Eigen::Vector2d Spline::get(double t) {
+Eigen::Vector2d Spline::get(double t) const {
     return {
         xCoefficients.dot(Vector6d{pow(t, 5), pow(t, 4), pow(t, 3), pow(t, 2), t, 1}),
         yCoefficients.dot(Vector6d{pow(t, 5), pow(t, 4), pow(t, 3), pow(t, 2), t, 1})
     };
 }
 
-Pose2d Spline::poseByArcLength(double length) {
+Pose2d Spline::poseByArcLength(double length) const {
     double al = 0;
     double t = 0;
     while (al < length and t <= 1) {
