@@ -36,7 +36,9 @@ bool PathFollower::update() {
             };
             Eigen::Vector3d e = rotation * Eigen::Vector3d{target.position.x() - actual.position.x(), target.position.y() - actual.position.y(), target.rotation - actual.rotation}; 
             double k = 2 * parameters.z * std::sqrt(std::pow(parameters.wd, 2) + parameters.b * std::pow(parameters.vd, 2));
-            //Todo: Finish this function
+            double linearVelocity;
+            double angularVelocity;
+            drive->setTarget(linearVelocity, angularVelocity);
         } else {
             throw std::runtime_error("Null Localizer and or Drive!");
         }
