@@ -30,14 +30,14 @@ bool PathFollower::update() {
 
             Pose2d current = localizer->getPose();
             Eigen::Matrix3d rotation{
-                {cos(current.rotation), sin(current.rotation), 0},
-                {-sin(current.rotation), cos(current.rotation), 0},
+                {std::cos(current.rotation), std::sin(current.rotation), 0},
+                {-std::sin(current.rotation), std::cos(current.rotation), 0},
                 {0, 0, 1}
             };
             Eigen::Vector3d e = rotation * Eigen::Vector3d{target.position.x() - actual.position.x(), target.position.y() - actual.position.y(), target.rotation - actual.rotation}; 
             double k = 2 * parameters.z * std::sqrt(std::pow(parameters.wd, 2) + parameters.b * std::pow(parameters.vd, 2));
-            double linearVelocity;
-            double angularVelocity;
+            double linearVelocity = parameters.vd * std::cos(e.x()) + k * e.x();
+            double angularVelocity = parameters.wd + k * e.x() + (parameters.b * parameters.vd * std::sin(e.z()) * e.y())/e.z();
             drive->setTarget(linearVelocity, angularVelocity);
         } else {
             throw std::runtime_error("Null Localizer and or Drive!");
