@@ -1,10 +1,11 @@
 #include "drive/TankDrive.h"
 #include "common/Pose2d.h"
 
-void TankDrive::setTarget(const Pose2d& point) {
-    double distNorm = point.position.norm();
-    double angle = distNorm > 0 ? acos(point.position.x()/distNorm): point.rotation;
+#define _USE_MATH_DEFINES
 
-    left->setVelocity(translationalPID->update(distNorm) - rotationalPID->update(angle));
-    right->setVelocity(translationalPID->update(distNorm) + rotationalPID->update(angle));
+void TankDrive::setTarget(double linearVelocity, double angularVelocity) {
+    double linear = linearVelocity/(wheelRadius * 2 * M_PI);
+
+    left->setVelocity(linear + angularVelocity);
+    right->setVelocity(linear - angularVelocity);
 }

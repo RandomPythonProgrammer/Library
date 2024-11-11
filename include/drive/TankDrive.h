@@ -9,15 +9,12 @@ class TankDrive: public IDriveTrain {
 private:
     std::shared_ptr<MotorGroup> left;
     std::shared_ptr<MotorGroup> right;
-    std::shared_ptr<PID> translationalPID, rotationalPID;
-    Eigen::Vector2d dimensions;
+    double wheelRadius;
 public:
     TankDrive(
-        const Eigen::Vector2d& dimensions,
+        double wheelRadius,
         const std::shared_ptr<MotorGroup>& left,
-        const std::shared_ptr<MotorGroup>& right,
-        const std::shared_ptr<PID>& rotationalPID,
-        const std::shared_ptr<PID>& translationalPID
-    ): dimensions{dimensions}, left{left}, right{right}, rotationalPID{rotationalPID}, translationalPID{translationalPID}{}
-    void setTarget(const Pose2d& point) override;
+        const std::shared_ptr<MotorGroup>& right
+    ): wheelRadius{wheelRadius}, left{left}, right{right} {}
+    void setTarget(double linearVelocity, double angularVelocity) override;
 };
