@@ -6,6 +6,6 @@
 struct Trajectory {
     std::vector<Spline> splines;
     Trajectory(const std::vector<Spline>& splines): splines{splines} {}
+    Pose2d poseByArcLength(double length);
+    double getLength();
 };
-
-Pose2d poseByArcLength(const Trajectory& trajectory, double length);
