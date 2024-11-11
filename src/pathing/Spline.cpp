@@ -2,59 +2,76 @@
 #include "common/calc.h"
 #include <cmath>
 
-double arcLength(const Vector6d &coefficients, double start, double end) {
-    return std::abs(integrate(start, end, [coefficients](double x){return sqrt(pow(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 2) + 1);}));
+double arcLength(const Vector6d &xCoefficients, const Vector6d& yCoefficients, double start, double end) {
+    return std::abs(integrate(start, end, [&](double t){
+        return sqrt(
+            pow(xCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0}), 2)
+             + pow(yCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0}), 2)
+        );
+    }));
 }
 
-double tangent(const Vector6d &coefficients, double x) {
-    return atan2(coefficients.dot(Vector6d{5 * pow(x, 4), 4 * pow(x, 3), 3 * pow(x, 2), 2 * x, 1, 0}), 1);
+double tangent(const Vector6d &xCoefficients, const Vector6d &yCoefficients, double t) {
+    return atan2(
+        xCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0}),
+        yCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0})
+    );
 }
 
-double getY(const Vector6d& coefficients, double x) {
-    return coefficients.dot(Vector6d{pow(x, 5), pow(x, 4), pow(x, 3), pow(x, 2), x, 1});
+Eigen::Vector2d get(const Vector6d& xCoefficients, const Vector6d& yCoefficients, double t) {
+    return {
+        xCoefficients.dot(Vector6d{pow(t, 5), pow(t, 4), pow(t, 3), pow(t, 2), t, 1}),
+        yCoefficients.dot(Vector6d{pow(t, 5), pow(t, 4), pow(t, 3), pow(t, 2), t, 1})
+    };
 }
 
 Pose2d poseByArcLength(const Spline& spline, double length) {
     double al = 0;
-    int sign = 1;
-    double x = spline.start.position.x();
-    if (spline.start.position.x() > spline.end.position.x()) {
-        sign = -1;
-    }
+    double t = 0;
     while (al < length) {
-        al += arcLength(spline.coefficients, x, x+sign*H_STEP);
-        x+=sign*H_STEP;
+        al += arcLength(spline.xCoefficients, spline.yCoefficients, t, t+H_STEP);
+        t+=H_STEP;
     }
-    return {{x, getY(spline.coefficients, x)}, tangent(spline.coefficients, x)};
+    return {get(spline.xCoefficients, spline.yCoefficients, t), tangent(spline.xCoefficients, spline.yCoefficients, t)};
 }
 
 
-Spline SplineFactory::makeSpline(Vector6d coefficients, Pose2d start, Pose2d end) {
-    return {coefficients, start, end, arcLength(coefficients, start.position.x(), end.position.x())};
+Spline SplineFactory::makeSpline(Vector6d xCoefficients, Vector6d yCoefficients, Pose2d start, Pose2d end) {
+    return {xCoefficients, yCoefficients, start, end, arcLength(xCoefficients, yCoefficients, start.position.x(), end.position.x())};
 }
 
 Spline SplineFactory::makeSpline(Pose2d start, Pose2d end) {
-    Vector6d coefficients;
+    Vector6d xCoefficients, yCoefficients;
 
     Eigen::Matrix<double, 6, 6> A {
-        {pow(start.position.x(), 5), pow(start.position.x(), 4), pow(start.position.x(), 3), pow(start.position.x(), 2), start.position.x(), 1},
-        {pow(end.position.x(), 5), pow(end.position.x(), 4), pow(end.position.x(), 3), pow(end.position.x(), 2), end.position.x(), 1},
-        {5 * pow(start.position.x(), 4), 4 * pow(start.position.x(), 3), 3 * pow(start.position.x(), 2), 2 * start.position.x(), 1, 0},
-        {5 * pow(end.position.x(), 4), 4 * pow(end.position.x(), 3), 3 * pow(end.position.x(), 2), 2 * end.position.x(), 1, 0},
-        {20 * pow(start.position.x(), 3), 12 * pow(start.position.x(), 2), 6 * start.position.x(), 2, 0, 0},
-        {20 * pow(end.position.x(), 3), 12 * pow(end.position.x(), 2), 6 * end.position.x(), 2, 0, 0},
+        {0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1},
+        {0, 0, 0, 0, 1, 0},
+        {5, 4, 3, 2, 1, 0},
+        {0, 0, 0, 2, 0, 0},
+        {20, 12, 6, 2, 0, 0},
     };
 
-    Vector6d b{start.position.y(), end.position.y(), tan(start.rotation), tan(end.rotation), 0, 0};
+    Vector6d b = {start.position.x(), end.position.x(), cos(start.rotation), cos(end.rotation), 0, 0};
 
     double det = A.determinant();
-    for (int i = 0; i < coefficients.size(); i++) {
+    for (int i = 0; i < xCoefficients.size(); i++) {
         Vector6d temp = A.col(i);
         A.col(i) = b;
-        coefficients[i] = A.determinant()/det;
+        xCoefficients[i] = A.determinant()/det;
         A.col(i) = temp;
     }
-    return makeSpline(coefficients, start, end);
+    
+    b = {start.position.y(), end.position.y(), sin(start.rotation), sin(end.rotation), 0, 0};
+
+    for (int i = 0; i < yCoefficients.size(); i++) {
+        Vector6d temp = A.col(i);
+        A.col(i) = b;
+        yCoefficients[i] = A.determinant()/det;
+        A.col(i) = temp;
+    }
+
+    return makeSpline(xCoefficients, yCoefficients, start, end);
 }
 
 Spline SplineFactory::makeSpline(const Spline& start, Pose2d end){ 
