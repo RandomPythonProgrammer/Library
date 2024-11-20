@@ -28,12 +28,12 @@ bool RamseteFollower::update() {
             Pose2d target = path->poseByArcLength(profile.getX(t));
             Pose2d actual = localizer->getPose();
 
-            Pose2d current = localizer->getPose();
             Eigen::Matrix3d rotation{
-                {std::cos(current.rotation), std::sin(current.rotation), 0},
-                {-std::sin(current.rotation), std::cos(current.rotation), 0},
+                {std::cos(actual.rotation), std::sin(actual.rotation), 0},
+                {-std::sin(actual.rotation), std::cos(actual.rotation), 0},
                 {0, 0, 1}
             };
+            
             Eigen::Vector3d e = rotation * Eigen::Vector3d{target.position.x() - actual.position.x(), target.position.y() - actual.position.y(), target.rotation - actual.rotation}; 
             double k = 2 * parameters.z * std::sqrt(std::pow(parameters.wd, 2) + parameters.b * std::pow(parameters.vd, 2));
             double linearVelocity = parameters.vd * std::cos(e.x()) + k * e.x();

@@ -15,7 +15,7 @@ double Spline::tangent(double t) const {
     return atan2(
         xCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0}),
         yCoefficients.dot(Vector6d{5 * pow(t, 4), 4 * pow(t, 3), 3 * pow(t, 2), 2 * t, 1, 0})
-    );
+    ) + (reversed ? M_PI: 0);
 }
 
 Eigen::Vector2d Spline::get(double t) const {
