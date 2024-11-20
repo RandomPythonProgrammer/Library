@@ -36,13 +36,13 @@ Pose2d Spline::poseByArcLength(double length) const {
 }
 
 
-Spline SplineFactory::makeSpline(Vector6d xCoefficients, Vector6d yCoefficients, Pose2d start, Pose2d end) {
-    Spline spline = {xCoefficients, yCoefficients, start, end, 0};
+Spline SplineFactory::makeSpline(Vector6d xCoefficients, Vector6d yCoefficients, Pose2d start, Pose2d end, bool reversed) {
+    Spline spline = {xCoefficients, yCoefficients, start, end, 0, reversed};
     spline.length = spline.arcLength(0, 1);
     return spline;
 }
 
-Spline SplineFactory::makeSpline(Pose2d start, Pose2d end) {
+Spline SplineFactory::makeSpline(Pose2d start, Pose2d end, bool reversed) {
     Vector6d xCoefficients, yCoefficients;
 
     Eigen::Matrix<double, 6, 6> A {
@@ -73,9 +73,9 @@ Spline SplineFactory::makeSpline(Pose2d start, Pose2d end) {
         A.col(i) = temp;
     }
 
-    return makeSpline(xCoefficients, yCoefficients, start, end);
+    return makeSpline(xCoefficients, yCoefficients, start, end, reversed);
 }
 
-Spline SplineFactory::makeSpline(const Spline& start, Pose2d end){ 
-    return makeSpline(start.end, end);
+Spline SplineFactory::makeSpline(const Spline& start, Pose2d end, bool reversed){ 
+    return makeSpline(start.end, end, reversed);
 }

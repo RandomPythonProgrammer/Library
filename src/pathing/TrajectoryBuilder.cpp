@@ -3,14 +3,14 @@
 
 TrajectoryBuilder& TrajectoryBuilder::to(const Pose2d pose) {
     if (splines.empty()) {
-        splines.push_back(std::move(SplineFactory::makeSpline(start, pose)));
+        splines.push_back(std::move(SplineFactory::makeSpline(start, pose, reversed)));
     } else {
-        splines.push_back(std::move(SplineFactory::makeSpline(splines.back(), pose)));
+        splines.push_back(std::move(SplineFactory::makeSpline(splines.back(), pose, reversed)));
     }
     return *this;
 }
 std::shared_ptr<Trajectory> TrajectoryBuilder::build() const {
-    return std::make_shared<Trajectory>(splines, reversed);
+    return std::make_shared<Trajectory>(splines);
 }
 
 TrajectoryBuilder TrajectoryBuilderFactory::create(const Pose2d &start) {

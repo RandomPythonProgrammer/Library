@@ -9,6 +9,7 @@ struct Spline {
     Vector6d yCoefficients; 
     Pose2d start, end;
     double length;
+    bool reversed;
 
     double arcLength(double start, double end) const;
     double tangent(double t) const;
@@ -19,8 +20,8 @@ struct Spline {
 
 class SplineFactory {
 private:
-    static Spline makeSpline(Vector6d xCoefficients, Vector6d yCoefficients, Pose2d start, Pose2d end);
+    static Spline makeSpline(Vector6d xCoefficients, Vector6d yCoefficients, Pose2d start, Pose2d end, bool reversed);
 public:
-    static Spline makeSpline(Pose2d start, Pose2d end);
-    static Spline makeSpline(const Spline& start, Pose2d end);
+    static Spline makeSpline(Pose2d start, Pose2d end, bool reversed);
+    static Spline makeSpline(const Spline& start, Pose2d end, bool reversed);
 };
