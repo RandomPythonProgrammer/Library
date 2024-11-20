@@ -4,6 +4,7 @@
 #include "pathing/Spline.h"
 
 struct Trajectory {
+    bool reversed;
     std::vector<Spline> splines;
     Trajectory(const std::vector<Spline>& splines): splines{splines} {}
     Pose2d poseByArcLength(double length) const;

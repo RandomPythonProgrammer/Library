@@ -1,11 +1,11 @@
-#include "drive/PathFollower.h"
+#include "drive/followers/RamseteFollower.h"
 #include "Eigen/src/Core/Matrix.h"
 #include "common/Pose2d.h"
 #include "common/time.h"
 #include <cmath>
 #include <stdexcept>
 
-void PathFollower::followPath(std::shared_ptr<Trajectory> path) {
+void RamseteFollower::followPath(const std::shared_ptr<Trajectory>& path) {
     this->path = path;
 
     profile = {
@@ -16,11 +16,11 @@ void PathFollower::followPath(std::shared_ptr<Trajectory> path) {
     lastTime = getMillis();
 }
 
-void PathFollower::stop() {
+void RamseteFollower::stop() {
     this->path = nullptr;
 }
 
-bool PathFollower::update() {
+bool RamseteFollower::update() {
     if (path) {
         if (localizer and drive) {
             double t = (getMillis() - lastTime)/1e3;
