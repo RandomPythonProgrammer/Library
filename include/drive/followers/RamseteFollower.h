@@ -7,11 +7,19 @@
 #include <memory>
 #include "drive/IFollower.h"
 
+/**
+ * @brief Parameters for the RamseteFollower
+ * 
+ */
 struct RamseteParameters {
     double b, z, vd, wd;
     double maxVelocity, maxAcceleration;
 };
 
+/**
+ * @brief A follower implementing the Ramsete controller
+ * 
+ */
 class RamseteFollower: public IFollower{
 private:
     std::shared_ptr<ILocalizer> localizer;
@@ -24,6 +32,13 @@ private:
 
     long lastTime;
 public:
+    /**
+     * @brief Construct a new Ramsete Follower object
+     * 
+     * @param localizer The localizer 
+     * @param drive The drive train 
+     * @param parameters The parameters for the controller 
+     */
     RamseteFollower(
         std::shared_ptr<ILocalizer> localizer,
         std::shared_ptr<IDriveTrain> drive,

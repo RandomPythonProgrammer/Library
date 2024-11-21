@@ -1,10 +1,12 @@
 #pragma once
-#include "IDriveTrain.h"
-#include "common/Pid.h"
-#include "common/Pose2d.h"
+#include "drive/IDriveTrain.h"
 #include "drive/MotorGroup.h"
 #include <memory>
 
+/**
+ * @brief A tank drive train
+ * 
+ */
 class TankDrive: public IDriveTrain {
 private:
     std::shared_ptr<MotorGroup> left;
