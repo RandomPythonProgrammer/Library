@@ -1,4 +1,5 @@
 #include "pathing/Trajectory.h"
+#include "Eigen/src/Core/Matrix.h"
 
 Pose2d Trajectory::poseByArcLength(double length) const {
     int currentSpline = 0;
@@ -20,4 +21,18 @@ double Trajectory::getLength() const {
     }
 
     return arclength;
+}
+
+Eigen::Vector2d Trajectory::getClosest(const Eigen::Vector2d& point) const {
+    Eigen::Vector2d closestPoint = splines[0].start.position;
+    double closestNorm = (closestPoint - point).norm();
+    for (const Spline& spline: splines) {
+        Eigen::Vector2d closest = spline.getClosest(point);
+        double norm = (closest - point).norm();
+        if (norm < closestNorm) {
+            closestNorm = norm;
+            closestPoint = closest;
+        }
+    }
+    return closestPoint;
 }

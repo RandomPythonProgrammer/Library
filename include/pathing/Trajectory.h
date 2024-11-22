@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <Eigen/Core>
 #include "common/Pose2d.h"
 #include "pathing/Spline.h"
 
@@ -28,4 +29,11 @@ struct Trajectory {
      * @return The computed length 
      */
     double getLength() const;
+    /**
+     * @brief Get the closest point on the trajectory to the given point
+     * 
+     * @param point The point to compare to 
+     * @return The closet point on the trajectory 
+     */
+    Eigen::Vector2d getClosest(const Eigen::Vector2d& point) const;
 };

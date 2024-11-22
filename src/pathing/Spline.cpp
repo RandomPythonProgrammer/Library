@@ -1,6 +1,9 @@
 #include "pathing/Spline.h"
+#include <Eigen/Core>
+#include "Eigen/src/Core/Matrix.h"
 #include "common/calc.h"
 #include <cmath>
+#include <vector>
 
 double Spline::arcLength(double start, double end) const {
     return std::abs(integrate(start, end, [&](double t){
@@ -33,6 +36,33 @@ Pose2d Spline::poseByArcLength(double length) const {
         t+=H_STEP;
     }
     return {get(t), tangent(t)};
+}
+
+Eigen::Vector2d Spline::getClosest(const Eigen::Vector2d& point) const {
+    Vector6d x = xCoefficients;
+    Vector6d y = yCoefficients;
+    x[x.size()-1] -= point.x();
+    y[y.size()-1] -= point.y();
+
+    Eigen::Matrix<double, 11, 1> distance = polynomial::multiply(x, x) + polynomial::multiply(y, y);
+    Eigen::Matrix<double, 10, 1> derivative = polynomial::derivative(distance);
+    std::vector<double> solutions = polynomial::solve(derivative);
+
+    double lowest = 0;
+    double lowestNorm = (get(0) - point).norm();
+    double endNorm = (get(1) - point).norm();
+    if (lowestNorm > endNorm) {
+        lowest = 1;
+        lowestNorm = endNorm;
+    }
+    for (double t: solutions) {
+        double norm = (get(t) - point).norm();
+        if (norm < lowestNorm) {
+            lowest = t;
+            lowestNorm = norm; 
+        }
+    }
+    return get(lowest);
 }
 
 

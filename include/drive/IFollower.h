@@ -3,6 +3,8 @@
 #include "pathing/Trajectory.h"
 #include <memory>
 
+const static double TOLERANCE = 0.25;
+
 /**
  * @brief Represents a path follower
  * 
@@ -23,7 +25,7 @@ struct IFollower {
     /**
      * @brief Updates the path following
      * 
-     * @return Whether or not the path has terminated 
+     * @return Whether or not the path is still following 
      */
     virtual bool update() = 0;
 };

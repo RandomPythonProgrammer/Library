@@ -1,4 +1,6 @@
 #pragma once
+
+#include <Eigen/Core>
 #include "common/Pose2d.h"
 #include <Eigen/Eigen>
 
@@ -44,6 +46,13 @@ struct Spline {
      * @return The pose at the given arclength 
      */
     Pose2d poseByArcLength(double length) const;
+    /**
+     * @brief Get the point on the curve closest to the given point
+     * 
+     * @param point The point to compare to 
+     * @return The point on the curve 
+     */
+    Eigen::Vector2d getClosest(const Eigen::Vector2d& point) const;
 };
 
 

@@ -2,6 +2,7 @@
 #include "Eigen/src/Core/Matrix.h"
 #include "common/Pose2d.h"
 #include "common/time.h"
+#include "drive/IFollower.h"
 #include <cmath>
 #include <stdexcept>
 
@@ -39,6 +40,10 @@ bool RamseteFollower::update() {
             double linearVelocity = parameters.vd * std::cos(e.x()) + k * e.x();
             double angularVelocity = parameters.wd + k * e.x() + (parameters.b * parameters.vd * std::sin(e.z()) * e.y())/e.z();
             drive->setTarget(linearVelocity, angularVelocity);
+
+            if ((target - actual).dist() > TOLERANCE) {
+                return true;
+            }
         } else {
             throw std::runtime_error("Null Localizer and or Drive!");
         }
