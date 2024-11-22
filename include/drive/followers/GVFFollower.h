@@ -14,8 +14,6 @@
  */
 struct GVFConfig {
     double k;
-    double kPT, kIT, kDT;
-    double kPA, kIA, kDA;
 };
 
 /**
@@ -31,7 +29,7 @@ private:
     PID anglePID;
     GVFConfig config;
 public:
-    GVFFollower(const std::shared_ptr<ILocalizer>& localizer, const std::shared_ptr<IDriveTrain>& driveTrain, GVFConfig config): localizer{localizer}, driveTrain{driveTrain}, config{config}, translationPID{config.kPT, config.kIT, config.kDT}, anglePID{config.kPA, config.kIA, config.kDA} {}
+    GVFFollower(const std::shared_ptr<ILocalizer>& localizer, const std::shared_ptr<IDriveTrain>& driveTrain, GVFConfig config, PID translationPID, PID anglePID): localizer{localizer}, driveTrain{driveTrain}, config{config}, translationPID{translationPID}, anglePID{anglePID} {}
     void followPath(const std::shared_ptr<Trajectory>& trajectory) override;
     void stop() override;
     bool update() override;
