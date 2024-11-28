@@ -3,7 +3,7 @@
 #include "Eigen/src/Core/Matrix.h"
 #include "common/calc.h"
 #include <cmath>
-#include <vector>
+#include <set>
 
 double Spline::arcLength(double start, double end) const {
     return std::abs(integrate(start, end, [&](double t){
@@ -46,7 +46,7 @@ Eigen::Vector2d Spline::getClosest(const Eigen::Vector2d& point) const {
 
     Eigen::Matrix<double, 11, 1> distance = polynomial::multiply(x, x) + polynomial::multiply(y, y);
     Eigen::Matrix<double, 10, 1> derivative = polynomial::derivative(distance);
-    std::vector<double> solutions = polynomial::solve(derivative);
+    std::set<double, Comparison> solutions = polynomial::solve(derivative);
 
     double lowest = 0;
     double lowestNorm = (get(0) - point).norm();

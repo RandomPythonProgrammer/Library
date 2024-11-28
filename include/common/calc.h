@@ -1,15 +1,35 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <Eigen/Eigenvalues>
 #include <cmath>
 #include <utility>
-#include <vector>
+#include <set>
 
 /**
  * @brief The step size for integrations
  * 
  */
 static const double H_STEP = 0.01;
+
+/**
+ * @brief The acceptable error for floating point math
+ * 
+ */
+static const double ERROR = 0.001;
+
+/**
+ * @brief Comparison for floating points
+ * 
+ */
+struct Comparison {
+    template<typename T, typename U>
+    bool operator()(const T& a, const U& b) const{
+        if (std::abs(a - b) < ERROR)
+            return false; 
+        return a < b; 
+    }
+};
 
 /**
  * @brief Integrates a function over a given range using a Riemann Sum
@@ -51,7 +71,7 @@ namespace polynomial {
     double compute(const Eigen::Matrix<double, N, 1>& coefficients, double x) {
         double output = 0;
         for (int i = 0; i < N; i++) {
-            output+=pow(x, N-i-1);
+            output+=coefficients[i] * pow(x, N-i-1);
         }
         return output;
     }
@@ -71,7 +91,7 @@ namespace polynomial {
         output.setZero();
         for (int i = 0; i < M; i++) {
             for (int ii = 0; ii < N; ii++) {
-                output[i + ii] += a[i] * a[ii];
+                output[i + ii] += a[i] * b[ii];
             }
         }
         return output;
@@ -101,19 +121,18 @@ namespace polynomial {
     * @return The possible solutions to the polynomial 
     */
     template<int N>
-    std::vector<double> solve(const Eigen::Matrix<double, N, 1>& input) {
-        std::vector<double> outputs;
-        outputs.reserve(N);
-        Eigen::Matrix<double, N, N> companion;
+    std::set<double, Comparison> solve(const Eigen::Matrix<double, N, 1>& input) {
+        std::set<double, Comparison> outputs;
+        Eigen::Matrix<double, N-1, N-1> companion;
         companion.setZero();
-        for (int i = 1; i < N; i++) {
+        for (int i = 1; i < N-1; i++) {
             companion.row(i)[i-1]= 1;
         }
-        companion.col(N - 1) = (-input/input[N - 1]).block(0, 0, N, 1);
-        Eigen::Matrix<double, N, 1> eigens = companion.eigenvalues().real();
+        companion.col(N - 2) = (-input/input[0]).block(0, 0, N-1, 1);
+        Eigen::Matrix<double, N-1, 1> eigens = companion.eigenvalues().real();
         for (double x: eigens) {
             if (polynomial::compute(input, x) == 0) {
-                outputs.push_back(x);
+                outputs.insert(x);
             }
         }
         return outputs;
