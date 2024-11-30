@@ -74,8 +74,8 @@ Spline SplineFactory::makeSpline(Vector6d xCoefficients, Vector6d yCoefficients,
 
 Spline SplineFactory::makeSpline(Pose2d start, Pose2d end, bool reversed) {
     if (reversed) {
-        start.rotation *= -1;
-        end.rotation *= -1;
+        start.rotation += M_PI;
+        end.rotation += M_PI;
     }
     Vector6d xCoefficients, yCoefficients;
 
