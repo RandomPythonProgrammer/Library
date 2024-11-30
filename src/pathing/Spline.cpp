@@ -110,6 +110,6 @@ Spline SplineFactory::makeSpline(Pose2d start, Pose2d end, bool reversed) {
     return makeSpline(xCoefficients, yCoefficients, start, end, reversed);
 }
 
-Spline SplineFactory::makeSpline(const Spline& start, Pose2d end, bool reversed){ 
-    return makeSpline(start.end, end, reversed);
+Spline SplineFactory::makeSpline(const Spline& start, Pose2d end, bool reversed){
+    return makeSpline({start.end.position, start.end.rotation + (start.reversed ? M_PI: 0)}, end, reversed);
 }
