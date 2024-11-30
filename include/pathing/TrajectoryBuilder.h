@@ -19,7 +19,7 @@ public:
      * 
      * @param start 
      */
-    TrajectoryBuilder(const Pose2d& start): start{start}{}
+    TrajectoryBuilder(const Pose2d& start): start{start}, reversed{false} {}
     /**
      * @brief Add a new control pose
      * 
